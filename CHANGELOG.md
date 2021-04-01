@@ -1,3 +1,7 @@
+# 0.2.1-dev.1
+
+- update dio
+
 # 0.2.0
 
 - make `Account` immutable

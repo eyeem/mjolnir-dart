@@ -189,7 +189,7 @@ class RequestBuilder {
   }
 
   String toQuery() {
-    final pairs = List<String>();
+    final pairs = <String>[];
 
     params.forEach((key, value) {
       pairs.add("${Uri.encodeComponent(key)}=${value.toString()}");
@@ -238,6 +238,7 @@ class RequestBuilder {
 
     RequestOptions requestOptions = RequestOptions(
         headers: headers,
+        path: path,
         method: methodToString(),
         responseType: ResponseType.plain // it's by default parsed
         );
