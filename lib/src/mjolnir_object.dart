@@ -1,5 +1,5 @@
 class MjolnirObject {
-  String get objectId {
+  String? get objectId {
     return null;
   }
 }
