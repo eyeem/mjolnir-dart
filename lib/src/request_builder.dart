@@ -236,9 +236,8 @@ class RequestBuilder {
 
     sign();
 
-    RequestOptions requestOptions = RequestOptions(
+    Options requestOptions = Options(
         headers: headers,
-        path: path,
         method: methodToString(),
         responseType: ResponseType.plain // it's by default parsed
         );
