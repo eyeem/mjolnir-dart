@@ -4,7 +4,7 @@ class PathDeclutter {
   PathDeclutter(this.keys);
 
   factory PathDeclutter.fromPath(String path) {
-    final keys = new List<String>();
+    final keys = <String>[];
     for (String node in path.split(".")) {
       keys.add(node);
     }
