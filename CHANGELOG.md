@@ -1,3 +1,10 @@
+# 0.2.1-dev.2
+
+- update to Dio 4.0.0
+- update to equatable 2.0.3
+- requires Dart 2.14 and Flutter 2.5.0
+- code migrated to sound null safety
+
 # 0.2.1-dev.1
 
 - update dio
