@@ -19,6 +19,7 @@ tools/test_data.dart
 .dart_tool
 .vscode
 .idea/
+.fvm/flutter_sdk
 
 voyager.iml
 
