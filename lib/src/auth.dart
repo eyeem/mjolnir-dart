@@ -17,10 +17,10 @@ import 'package:equatable/equatable.dart';
 
 class Auth extends Equatable {
   /// members
-  final String access_token;
-  final String token_type;
-  final int expires_in;
-  final String refresh_token;
+  final String? access_token;
+  final String? token_type;
+  final int? expires_in;
+  final String? refresh_token;
 
   /// ctor
   const Auth({
@@ -32,13 +32,10 @@ class Auth extends Equatable {
 
   /// factory
   factory Auth.fromJson(Map<dynamic, dynamic> json) {
-    if (json == null) {
-      return null;
-    }
-    String access_token;
-    String token_type;
-    int expires_in;
-    String refresh_token;
+    String? access_token;
+    String? token_type;
+    int? expires_in;
+    String? refresh_token;
     access_token = json['access_token']?.toString();
     token_type = json['token_type']?.toString();
     expires_in = json['expires_in'];
@@ -52,10 +49,10 @@ class Auth extends Equatable {
   }
 
   Auth copyWith(
-      {String access_token,
-      String token_type,
-      int expires_in,
-      String refresh_token}) {
+      {String? access_token,
+      String? token_type,
+      int? expires_in,
+      String? refresh_token}) {
     return Auth(
         access_token: access_token ?? this.access_token,
         token_type: token_type ?? this.token_type,
@@ -78,14 +75,6 @@ class Auth extends Equatable {
       ((json) => Auth.fromJson(json));
 
   @override
-  List<Object> get props =>
+  List<Object?> get props =>
       [access_token, token_type, expires_in, refresh_token];
-}
-
-DateTime _safeParse(String formattedString) {
-  try {
-    return DateTime.parse(formattedString);
-  } catch (_) {
-    return null;
-  }
 }

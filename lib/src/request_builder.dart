@@ -12,30 +12,30 @@ import 'request_compute.dart';
 
 enum RequestMethod { get, put, delete, post, patch }
 
-bool isEmpty(String value) => (value == null || value.length == 0);
+bool isEmpty(String? value) => (value == null || value.length == 0);
 
 const _CONTENT_TYPE_JSON = "application/json; charset=utf-8";
 
 class RequestBuilder {
-  String host;
-  String path;
-  String listOf_;
-  String objectOf_;
-  PathDeclutter declutter;
+  String? host;
+  String? path;
+  String? listOf_;
+  String? objectOf_;
+  PathDeclutter? declutter;
 
   final params = new Map<String, StringWrapper>();
   final headers = new Map<String, String>();
   final files = new Map<String, String>();
   final meta = new Map<String, String>();
 
-  Account account;
+  Account? account;
   RequestMethod method = RequestMethod.get;
   dynamic content;
-  String content_type;
-  Pagination pagination;
-  FormData formData;
-  ProgressCallback onSendProgress;
-  ProgressCallback onReceiveProgress;
+  String? content_type;
+  Pagination? pagination;
+  FormData? formData;
+  ProgressCallback? onSendProgress;
+  ProgressCallback? onReceiveProgress;
 
   RequestBuilder();
 
@@ -73,21 +73,21 @@ class RequestBuilder {
 
   RequestBuilder fetchFront(dynamic info) {
     if (pagination != null) {
-      pagination.fetchFront(this, info);
+      pagination!.fetchFront(this, info);
     }
     return this;
   }
 
   RequestBuilder fetchBack(dynamic info) {
     if (pagination != null) {
-      pagination.fetchBack(this, info);
+      pagination!.fetchBack(this, info);
     }
     return this;
   }
 
   RequestBuilder sign() {
     if (account != null) {
-      return account.sign(this);
+      return account!.sign(this);
     }
     return this;
   }
@@ -160,7 +160,7 @@ class RequestBuilder {
     return this;
   }
 
-  String getMetaTag() {
+  String? getMetaTag() {
     return meta["tag"];
   }
 
@@ -221,24 +221,23 @@ class RequestBuilder {
     sb.write(toQuery());
     sb.write(";");
     if (account != null) {
-      sb.write(account.id ?? "");
+      sb.write(account?.id ?? "");
       sb.write(";");
-      sb.write(account.type ?? "");
+      sb.write(account?.type ?? "");
       sb.write(";");
     }
     return sb.toString();
   }
 
-  Future<Response> asResponse({Dio client}) {
+  Future<Response> asResponse({Dio? client}) {
     if (client == null) {
       client = _client();
     }
 
     sign();
 
-    RequestOptions requestOptions = RequestOptions(
+    Options requestOptions = Options(
         headers: headers,
-        path: path,
         method: methodToString(),
         responseType: ResponseType.plain // it's by default parsed
         );
@@ -273,7 +272,7 @@ class RequestBuilder {
         throw UnimplementedError("Method $method not implemented yet");
     }
 
-    return client.request(toUrl(),
+    return client!.request(toUrl(),
         data: _data,
         options: requestOptions,
         onSendProgress: onSendProgress,
@@ -286,7 +285,7 @@ class RequestBuilder {
   }
 
   Future<MjolnirResponse<Map<dynamic, dynamic>>> plainJson() {
-    Response _response;
+    Response? _response;
 
     return asResponse()
         .then((response) => compute(_parsePlainJson, response.data.toString()))
@@ -301,7 +300,7 @@ class RequestBuilder {
   }
 
   Future<MjolnirResponse<List<dynamic>>> plainJsonArray() {
-    Response _response;
+    Response? _response;
 
     return asResponse()
         .then((response) =>
@@ -315,7 +314,7 @@ class RequestBuilder {
             requestBuilder: this));
   }
 
-  Future<MjolnirResponse<T>> objectOf<T>({String type}) {
+  Future<MjolnirResponse<T>> objectOf<T>({String? type}) {
     this.objectOf_ = type ?? this.objectOf_;
 
     if (objectOf_ == null) {
@@ -324,7 +323,7 @@ class RequestBuilder {
 
     assert(objectOf_ != null);
 
-    Response _response;
+    Response? _response;
 
     return asResponse()
         .then((response) {
@@ -333,7 +332,7 @@ class RequestBuilder {
         })
         .then((requestCompute) => compute(_parseResponseObject, requestCompute))
         .then((computation) => MjolnirResponse<T>(
-            responseJson: computation.responseJson,
+            responseJson: computation.responseJson as Map<String, dynamic>?,
             data: computation.data,
             response: _response,
             requestBuilder: this))
@@ -344,7 +343,7 @@ class RequestBuilder {
             requestBuilder: this));
   }
 
-  Future<MjolnirResponse<List<T>>> listOf<T>({String type}) {
+  Future<MjolnirResponse<List<T>>> listOf<T>({String? type}) {
     this.listOf_ = type ?? this.listOf_;
 
     if (listOf_ == null) {
@@ -357,7 +356,7 @@ class RequestBuilder {
 
     assert(listOf_ != null);
 
-    Response _response;
+    Response? _response;
 
     return asResponse()
         .then((response) {
@@ -366,8 +365,8 @@ class RequestBuilder {
         })
         .then((requestCompute) => compute(_parseResponseList, requestCompute))
         .then((computation) => MjolnirResponse<List<T>>(
-            responseJson: computation.responseJson,
-            data: List<T>.from(computation.data),
+            responseJson: computation.responseJson as Map<String, dynamic>?,
+            data: List<T>.from(computation.data!),
             response: _response,
             requestBuilder: this))
         .catchError((error, stacktrace) => MjolnirResponse<List<T>>(
@@ -382,26 +381,26 @@ class RequestBuilder {
     _clientSingleton = value;
   }
 
-  static Dio getClientSingletonLazy() => _client();
+  static Dio? getClientSingletonLazy() => _client();
 }
 
-Map<dynamic, dynamic> _parsePlainJson(String body) {
-  return json.decode(body) as Map<dynamic, dynamic>;
+Map<dynamic, dynamic>? _parsePlainJson(String body) {
+  return json.decode(body) as Map<dynamic, dynamic>?;
 }
 
-List<dynamic> _parsePlainJsonArray(String body) {
+List<dynamic>? _parsePlainJsonArray(String body) {
   return json.decode(body);
 }
 
 class _ResponseObject {
   _ResponseObject(this.responseJson, this.data);
-  final Map<dynamic, dynamic> responseJson;
+  final Map<dynamic, dynamic>? responseJson;
   final dynamic data;
 }
 
 _ResponseObject _parseResponseObject(RequestCompute requestCompute) {
   var responseJSON =
-      (json.decode(requestCompute.body) as Map<dynamic, dynamic>);
+      (json.decode(requestCompute.body) as Map<dynamic, dynamic>?);
   final jsonResponse =
       requestCompute.declutter?.jsonPath(responseJSON) ?? responseJSON;
   final deserializer =
@@ -411,13 +410,13 @@ _ResponseObject _parseResponseObject(RequestCompute requestCompute) {
 
 class _ResponseList {
   _ResponseList(this.responseJson, this.data);
-  final Map<dynamic, dynamic> responseJson;
-  final List<dynamic> data;
+  final Map<dynamic, dynamic>? responseJson;
+  final List<dynamic>? data;
 }
 
 _ResponseList _parseResponseList(RequestCompute requestCompute) {
   var responseJSON =
-      (json.decode(requestCompute.body) as Map<dynamic, dynamic>);
+      (json.decode(requestCompute.body) as Map<dynamic, dynamic>?);
   final jsonResponse =
       requestCompute.declutter?.jsonPath(responseJSON) ?? responseJSON;
   final deserializer =
@@ -430,7 +429,7 @@ class StringWrapper {
   final String value;
   final bool encoded;
 
-  StringWrapper({this.value, this.encoded = false});
+  StringWrapper({required this.value, this.encoded = false});
 
   @override
   String toString() {
@@ -438,8 +437,8 @@ class StringWrapper {
   }
 }
 
-Dio _clientSingleton;
-Dio _client() {
+Dio? _clientSingleton;
+Dio? _client() {
   if (_clientSingleton == null) {
     _clientSingleton = mjolnirClient();
   }
@@ -473,12 +472,12 @@ class _MjonirPostTransformer extends DefaultTransformer {
 }
 
 class MjolnirResponse<T> {
-  final Map<String, dynamic> responseJson;
-  final T data;
+  final Map<String, dynamic>? responseJson;
+  final T? data;
   final dynamic error;
   final dynamic stacktrace;
-  final Response response;
-  final RequestBuilder requestBuilder;
+  final Response? response;
+  final RequestBuilder? requestBuilder;
 
   MjolnirResponse(
       {this.responseJson,
