@@ -44,27 +44,27 @@ class RequestBuilder {
     return this;
   }
 
-  RequestBuilder withFormData(FormData formData) {
+  RequestBuilder withFormData(FormData? formData) {
     this.formData = formData;
     return this;
   }
 
-  RequestBuilder withReceiveProgress(ProgressCallback callback) {
+  RequestBuilder withReceiveProgress(ProgressCallback? callback) {
     this.onReceiveProgress = callback;
     return this;
   }
 
-  RequestBuilder withSendProgress(ProgressCallback callback) {
+  RequestBuilder withSendProgress(ProgressCallback? callback) {
     this.onSendProgress = callback;
     return this;
   }
 
-  RequestBuilder withAccount(Account account) {
+  RequestBuilder withAccount(Account? account) {
     this.account = account;
     return this;
   }
 
-  RequestBuilder withPagination(Pagination pagination) {
+  RequestBuilder withPagination(Pagination? pagination) {
     this.pagination = pagination;
     return this;
   }
@@ -133,7 +133,7 @@ class RequestBuilder {
     }
   }
 
-  RequestBuilder setContent(String content, String contentType) {
+  RequestBuilder setContent(String content, String? contentType) {
     this.content = content;
     this.content_type = contentType;
     return this;
